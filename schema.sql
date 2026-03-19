@@ -1,3 +1,6 @@
+-- To add unique constraint to an existing database, run:
+-- ALTER TABLE votes ADD CONSTRAINT unique_user_post_vote UNIQUE (user_id, post_id, vote_type);
+
 -- Next Auth standard tables, see https://authjs.dev/reference/adapter/pg#setup
 CREATE TABLE verification_token
 (
@@ -62,8 +65,8 @@ CREATE TABLE comments1 (
     id SERIAL PRIMARY KEY,
     body TEXT NOT NULL,
     user_id INT REFERENCES users(id),
-    post_id INT REFERENCES posts(id),
-    parent_comment_id INT NULL REFERENCES comments(id),
+    post_id INT REFERENCES posts1(id),
+    parent_comment_id INT NULL REFERENCES comments1(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -72,9 +75,9 @@ CREATE TABLE comments1 (
 CREATE TABLE votes (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
-    post_id INT NULL REFERENCES posts(id),
+    post_id INT NULL REFERENCES posts1(id),
     vote SMALLINT CHECK (vote IN (-1, 1)),
     vote_type VARCHAR(255) CHECK (vote_type IN ('post', 'comment')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    -- UNIQUE(user_id, post_id, vote_type)
+    UNIQUE(user_id, post_id, vote_type)
 );
