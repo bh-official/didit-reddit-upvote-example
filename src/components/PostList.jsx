@@ -4,18 +4,24 @@ import { Vote } from "./Vote";
 import { db } from "@/db";
 import { POSTS_PER_PAGE } from "@/config";
 
-export async function PostList({ currentPage = 1 }) {
-  // const { rows: posts } =
-  //   await db.query(`SELECT posts.id, posts.title, posts.body, posts.created_at, users.name,
-  //   COALESCE(SUM(votes.vote), 0) AS vote_total
-  //    FROM posts1
-  //    JOIN users ON posts.user_id = users.id
-  //    LEFT JOIN votes ON votes.post_id = posts.id
-  //    GROUP BY posts.id, users.name
-  //    ORDER BY vote_total DESC
-  //    LIMIT ${POSTS_PER_PAGE}
-  //    OFFSET ${POSTS_PER_PAGE * (currentPage - 1)}`);
-  const { rows: posts } = await db.query(`
+export async function PostList({ currentPage = 1, sort = "top" }) {
+  let orderBy;
+
+  switch (sort) {
+    case "recent":
+      orderBy = "posts1.created_at DESC";
+      break;
+    case "controversial":
+      // Controversial = posts with high ratio of upvotes AND downvotes
+      // Using: ABS(upvotes - downvotes) is low but total votes is high
+      orderBy = "(upvotes + downvotes) DESC, ABS(upvotes - downvotes) ASC";
+      break;
+    case "top":
+    default:
+      orderBy = "vote_total DESC";
+  }
+
+  const query = `
   SELECT 
     posts1.id,
     posts1.title,
@@ -23,18 +29,44 @@ export async function PostList({ currentPage = 1 }) {
     posts1.created_at,
     posts1.user_id,
     users.name,
+    COALESCE(SUM(CASE WHEN votes.vote > 0 THEN votes.vote ELSE 0 END), 0) AS upvotes,
+    COALESCE(SUM(CASE WHEN votes.vote < 0 THEN ABS(votes.vote) ELSE 0 END), 0) AS downvotes,
     COALESCE(SUM(votes.vote), 0) AS vote_total
   FROM posts1
   JOIN users ON posts1.user_id = users.id
-  LEFT JOIN votes ON votes.post_id = posts1.id
+  LEFT JOIN votes ON votes.post_id = posts1.id AND votes.vote_type = 'post'
   GROUP BY posts1.id, posts1.title, posts1.body, posts1.created_at, posts1.user_id, users.name
-  ORDER BY vote_total DESC
+  ORDER BY ${orderBy}
   LIMIT ${POSTS_PER_PAGE}
   OFFSET ${POSTS_PER_PAGE * (currentPage - 1)}
-`);
+  `;
+
+  const { rows: posts } = await db.query(query);
 
   return (
     <>
+      <div className="max-w-screen-lg mx-auto p-4">
+        <div className="flex space-x-4 mb-4">
+          <Link
+            href="/"
+            className={`px-3 py-1 rounded ${sort === "top" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+          >
+            Top
+          </Link>
+          <Link
+            href="/?sort=recent"
+            className={`px-3 py-1 rounded ${sort === "recent" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+          >
+            Recent
+          </Link>
+          <Link
+            href="/?sort=controversial"
+            className={`px-3 py-1 rounded ${sort === "controversial" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+          >
+            Controversial
+          </Link>
+        </div>
+      </div>
       <ul className="max-w-screen-lg mx-auto p-4 mb-4">
         {posts.map((post) => (
           <li
@@ -62,7 +94,7 @@ export async function PostList({ currentPage = 1 }) {
           </li>
         ))}
       </ul>
-      <Pagination currentPage={currentPage} />
+      <Pagination currentPage={currentPage} sort={sort} />
     </>
   );
 }
