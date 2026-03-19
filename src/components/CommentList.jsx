@@ -3,7 +3,7 @@ import { CommentForm } from "./CommentForm";
 import Image from "next/image";
 
 export async function CommentList({ postId, parentCommentId = null }) {
-  const commentQuery = `SELECT comments.id, comments.body, users.name, users.image FROM comments JOIN users ON comments.user_id = users.id WHERE post_id = $1 AND parent_comment_id ${
+  const commentQuery = `SELECT comments1.id, comments1.body, users.name, users.image FROM comments1 JOIN users ON comments1.user_id = users.id WHERE post_id = $1 AND parent_comment_id ${
     parentCommentId ? `= $2` : `IS NULL`
   }`;
   const commentArgs = [postId];
