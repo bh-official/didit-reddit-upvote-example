@@ -1,16 +1,25 @@
+## Upvote
+
+**Live Demo:** [https://didit-reddit-upvote-example-alpha.vercel.app](https://didit-reddit-upvote-example-alpha.vercel.app)
+
+**GitHub Repository:** [https://github.com/bh-official/didit-reddit-upvote-example](https://github.com/bh-official/didit-reddit-upvote-example)
+
 ## Assignment Reflection
+
+**Fixed Table Names** - Since I already had `posts` and `comments` tables in my database and wanted to keep them, new tables named `posts1` and `comments1` were created. Updated all database references from `posts` to `posts1` and `comments` to `comments1` across the entire codebase:
+
+- `src/app/post/[postId]/page.jsx` - Single post query
+- `src/components/CommentList.jsx` - Comments query
+- `src/actions/comments.js` - Comment insertion
+- `schema.sql` - Database schema with proper foreign key references
 
 ### Requirements Met and Goals Achieved
 
-1. **Fixed Table Names** - Updated all database references from `posts` to `posts1` and `comments` to `comments1` across the entire codebase including:
-   - `src/app/post/[postId]/page.jsx` - Single post query
-   - `src/components/CommentList.jsx` - Comments query
-   - `src/actions/comments.js` - Comment insertion
-   - `schema.sql` - Database schema with proper foreign key references
+1. **Fixed Page Titles** - Added `generateMetadata()` function to dynamically set page titles based on post title in `src/app/post/[postId]/page.jsx`
 
-2. **Fixed Page Titles** - Added `generateMetadata()` function to dynamically set page titles based on post title in `src/app/post/[postId]/page.jsx`
+2. **Added Error Handling for Voting** - Created new API route (`src/app/api/vote/route.js`) and updated VoteButtons component to show "You must be logged in to vote" error message when users not logged in attempt to vote
 
-3. **Added Error Handling for Voting** - Created new API route (`src/app/api/vote/route.js`) and updated VoteButtons component to show "You must be logged in to vote" error message when users not logged in attempt to vote
+3. **Enhanced Error Handling** - Improved voting error handling with user-friendly messages
 
 4. **Added Duplicate Vote Prevention** - Added UNIQUE constraint on `(user_id, post_id, vote_type)` in the votes table schema to prevent users from voting multiple times on the same post
 
@@ -24,9 +33,22 @@
    - Nested comments (recursive CommentList component)
    - User authentication
 
-### Goals Not Achieved
+### New Features Added from the README file of the project
 
-All primary requirements were achieved. The application is fully functional with the corrected table names and enhanced error handling.
+1. **User Profiles** - Added user profile pages at `/user/[userId]` showing:
+   - User's profile information (name, avatar, join date)
+   - User's karma score
+   - List of user's posts
+   - List of user's recent comments
+   - Links to profiles from usernames on posts
+
+2. **Post Sorting** - Added sorting options for posts:
+   - Top (most upvotes) - default
+   - Recent (newest first)
+   - Controversial (most debated)
+   - Sort buttons with amber styling
+
+All primary requirements were achieved. The application is fully functional with the enhanced error handling.
 
 ### Difficulties Encountered
 
@@ -36,20 +58,7 @@ All primary requirements were achieved. The application is fully functional with
 
 ### What Went Well
 
-- The recursive comment system was already well-implemented
-- Next.js App Router structure was clean and easy to navigate
-- Database schema properly defined with foreign key relationships
-- Authentication using Auth.js was already integrated
-
-### Useful External Sources
-
-- [Next.js Documentation](https://nextjs.org/docs) - For understanding App Router and server actions
-- [React useFormState Documentation](https://react.dev/reference/react-dom/useFormState) - For understanding form state management
-- [PostgreSQL UNIQUE Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE) - For implementing duplicate vote prevention
-
-### Feedback Requested
-
-Would appreciate feedback on:
-
-- The approach taken for error handling in voting (using API route vs server actions)
-- Any potential improvements to the database schema or query performance
+- Joining the existing project was straightforward
+- Installing dependencies went smoothly
+- Getting the .env file key was quite easy
+- The YouTube video on creating a GitHub App for NextAuth was very helpful
