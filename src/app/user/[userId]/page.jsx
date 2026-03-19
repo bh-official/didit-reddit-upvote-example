@@ -59,7 +59,7 @@ export default async function UserProfilePage({ params }) {
   return (
     <div className="max-w-screen-lg mx-auto p-4">
       {/* User Profile Header */}
-      <div className="bg-zinc-800 rounded-xl p-6 mb-6">
+      <div className="bg-amber-800 rounded-xl p-6 mb-6">
         <div className="flex items-center space-x-4">
           {user.image ? (
             <img
@@ -97,7 +97,7 @@ export default async function UserProfilePage({ params }) {
         ) : (
           <ul className="space-y-4">
             {posts.map((post) => (
-              <li key={post.id} className="bg-zinc-800 rounded-lg p-4">
+              <li key={post.id} className="bg-amber-800 rounded-lg p-4">
                 <div className="flex space-x-4">
                   <Vote postId={post.id} votes={post.vote_total} />
                   <div>
@@ -128,7 +128,7 @@ export default async function UserProfilePage({ params }) {
         ) : (
           <ul className="space-y-4">
             {comments.map((comment) => (
-              <li key={comment.id} className="bg-zinc-800 rounded-lg p-4">
+              <li key={comment.id} className="bg-amber-800 rounded-lg p-4">
                 <Link
                   href={`/post/${comment.post_id}`}
                   className="text-sm text-zinc-400 hover:text-pink-400"
