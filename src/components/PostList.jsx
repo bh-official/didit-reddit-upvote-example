@@ -12,13 +12,13 @@ export async function PostList({ currentPage = 1, sort = "top" }) {
       orderBy = "posts1.created_at DESC";
       break;
     case "controversial":
-      // Controversial = posts with high ratio of upvotes AND downvotes
-      // Using: ABS(upvotes - downvotes) is low but total votes is high
-      orderBy = "(upvotes + downvotes) DESC, ABS(upvotes - downvotes) ASC";
+      // Controversial = posts with both upvotes and downvotes
+      // Order by total votes (high) then by difference between upvotes and downvotes (low)
+      orderBy = "COALESCE(SUM(votes.vote), 0) DESC, ABS(SUM(votes.vote)) ASC";
       break;
     case "top":
     default:
-      orderBy = "vote_total DESC";
+      orderBy = "COALESCE(SUM(votes.vote), 0) DESC";
   }
 
   const query = `
@@ -29,12 +29,10 @@ export async function PostList({ currentPage = 1, sort = "top" }) {
     posts1.created_at,
     posts1.user_id,
     users.name,
-    COALESCE(SUM(CASE WHEN votes.vote > 0 THEN votes.vote ELSE 0 END), 0) AS upvotes,
-    COALESCE(SUM(CASE WHEN votes.vote < 0 THEN ABS(votes.vote) ELSE 0 END), 0) AS downvotes,
     COALESCE(SUM(votes.vote), 0) AS vote_total
   FROM posts1
   JOIN users ON posts1.user_id = users.id
-  LEFT JOIN votes ON votes.post_id = posts1.id AND votes.vote_type = 'post'
+  LEFT JOIN votes ON votes.post_id = posts1.id
   GROUP BY posts1.id, posts1.title, posts1.body, posts1.created_at, posts1.user_id, users.name
   ORDER BY ${orderBy}
   LIMIT ${POSTS_PER_PAGE}
