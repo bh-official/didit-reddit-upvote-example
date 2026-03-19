@@ -48,7 +48,7 @@ CREATE TABLE users
 );
 
 -- Posts table
-CREATE TABLE posts (
+CREATE TABLE posts1 (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     body TEXT,
@@ -58,7 +58,7 @@ CREATE TABLE posts (
 );
 
 -- Comments table
-CREATE TABLE comments (
+CREATE TABLE comments1 (
     id SERIAL PRIMARY KEY,
     body TEXT NOT NULL,
     user_id INT REFERENCES users(id),
