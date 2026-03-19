@@ -47,19 +47,19 @@ export async function PostList({ currentPage = 1, sort = "top" }) {
         <div className="flex space-x-4 mb-4">
           <Link
             href="/"
-            className={`px-3 py-1 rounded ${sort === "top" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+            className={`px-3 py-1 rounded ${sort === "top" ? "bg-pink-500 text-white" : "bg-amber-800"}`}
           >
             Top
           </Link>
           <Link
             href="/?sort=recent"
-            className={`px-3 py-1 rounded ${sort === "recent" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+            className={`px-3 py-1 rounded ${sort === "recent" ? "bg-pink-500 text-white" : "bg-amber-800"}`}
           >
             Recent
           </Link>
           <Link
             href="/?sort=controversial"
-            className={`px-3 py-1 rounded ${sort === "controversial" ? "bg-pink-500 text-white" : "bg-zinc-700"}`}
+            className={`px-3 py-1 rounded ${sort === "controversial" ? "bg-pink-500 text-white" : "bg-amber-800"}`}
           >
             Controversial
           </Link>
