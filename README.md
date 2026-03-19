@@ -62,3 +62,5 @@ All primary requirements were achieved. The application is fully functional with
 - Installing dependencies went smoothly
 - Getting the .env file key was quite easy
 - The YouTube video on creating a GitHub App for NextAuth was very helpful
+
+I would have liked to complete all the potential future features; however, due to time constraints I was only able to complete a few. As I also want to begin planning for the final week project, I’ve decided to stop at this stage.
