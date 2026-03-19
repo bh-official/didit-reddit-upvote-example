@@ -2,6 +2,7 @@ import { CommentForm } from "@/components/CommentForm";
 import { CommentList } from "@/components/CommentList";
 import { Vote } from "@/components/Vote";
 import { db } from "@/db";
+import Link from "next/link";
 
 export async function generateMetadata({ params }) {
   const postId = params.postId;
@@ -22,13 +23,13 @@ export default async function SinglePostPage({ params }) {
   const postId = params.postId;
 
   const { rows: posts } = await db.query(
-    `SELECT posts1.id, posts1.title, posts1.body, posts1.created_at, users.name, 
+    `SELECT posts1.id, posts1.title, posts1.body, posts1.created_at, posts1.user_id, users.name, 
     COALESCE(SUM(votes.vote), 0) AS vote_total
     FROM posts1
     JOIN users ON posts1.user_id = users.id
     LEFT JOIN votes ON votes.post_id = posts1.id
     WHERE posts1.id = $1
-    GROUP BY posts1.id, users.name
+    GROUP BY posts1.id, posts1.user_id, users.name
     LIMIT 1;`,
     [postId],
   );
@@ -45,7 +46,15 @@ export default async function SinglePostPage({ params }) {
         <Vote postId={post.id} votes={post.vote_total} />
         <div className="">
           <h1 className="text-2xl">{post.title}</h1>
-          <p className="text-zinc-400 mb-4">Posted by {post.name}</p>
+          <p className="text-zinc-400 mb-4">
+            Posted by{" "}
+            <Link
+              href={`/user/${post.user_id}`}
+              className="hover:text-pink-500"
+            >
+              {post.name}
+            </Link>
+          </p>
         </div>
       </div>
       <main className="whitespace-pre-wrap m-4">{post.body}</main>

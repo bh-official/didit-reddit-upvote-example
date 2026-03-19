@@ -21,12 +21,13 @@ export async function PostList({ currentPage = 1 }) {
     posts1.title,
     posts1.body,
     posts1.created_at,
+    posts1.user_id,
     users.name,
     COALESCE(SUM(votes.vote), 0) AS vote_total
   FROM posts1
   JOIN users ON posts1.user_id = users.id
   LEFT JOIN votes ON votes.post_id = posts1.id
-  GROUP BY posts1.id, posts1.title, posts1.body, posts1.created_at, users.name
+  GROUP BY posts1.id, posts1.title, posts1.body, posts1.created_at, posts1.user_id, users.name
   ORDER BY vote_total DESC
   LIMIT ${POSTS_PER_PAGE}
   OFFSET ${POSTS_PER_PAGE * (currentPage - 1)}
@@ -48,7 +49,15 @@ export async function PostList({ currentPage = 1 }) {
               >
                 {post.title}
               </Link>
-              <p className="text-zinc-700">posted by {post.name}</p>
+              <p className="text-zinc-700">
+                posted by{" "}
+                <Link
+                  href={`/user/${post.user_id}`}
+                  className="hover:text-pink-500"
+                >
+                  {post.name}
+                </Link>
+              </p>
             </div>
           </li>
         ))}
